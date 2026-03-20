@@ -1,7 +1,7 @@
 plugins {
-    id("wavecast.android.application")
-    id("wavecast.android.compose")
-    id("wavecast.android.hilt")
+    alias(libs.plugins.wavecast.android.application)
+    alias(libs.plugins.wavecast.android.compose)
+    alias(libs.plugins.wavecast.android.hilt)
 }
 
 android {
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.example.wavecast"
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.0.0" // X.Y.Z; X = Major, Y = minor, Z = Patch level
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

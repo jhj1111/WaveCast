@@ -1,5 +1,6 @@
 //import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.LibraryExtension
+//import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.ApplicationExtension
 import com.example.wavecast.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,8 +12,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
         with(target) {
             apply(plugin = "org.jetbrains.kotlin.plugin.compose")
 
-//            val extension = extensions.getByType<CommonExtension<*, *, *, *, *, *>>()
-            val extension = extensions.getByType<LibraryExtension>()
+            val extension = extensions.getByType<ApplicationExtension>()
             configureAndroidCompose(extension)
         }
     }

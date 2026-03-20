@@ -1,18 +1,17 @@
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.ApplicationExtension
 import com.example.wavecast.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-class AndroidLibraryConventionPlugin : Plugin<Project> {
+class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("com.android.library")
-                apply("org.jetbrains.kotlin.android")
+                apply("com.android.application")
             }
 
-            extensions.configure<LibraryExtension> {
+            extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 35
             }

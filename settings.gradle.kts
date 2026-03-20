@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WaveCast"
+rootProject.name = "wavecast"
 include(":app")
  
