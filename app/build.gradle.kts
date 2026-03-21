@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.wavecast.android.application)
-    alias(libs.plugins.wavecast.android.compose)
+    alias(libs.plugins.wavecast.android.application.compose)
     alias(libs.plugins.wavecast.android.hilt)
 }
 
@@ -27,6 +27,11 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:ui"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:player"))
+    implementation(project(":feature:library"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

@@ -30,20 +30,28 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidApplication") {
-            id = libs.plugins.wavecast.android.application.get().pluginId
+            id = libs.plugins.wavecast.android.application.asProvider().get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibrary") {
-            id = "wavecast.android.library"
+            id = libs.plugins.wavecast.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidCompose") {
-            id = "wavecast.android.compose"
-            implementationClass = "AndroidComposeConventionPlugin"
+        register("androidLibraryCompose") {
+            id = libs.plugins.wavecast.android.library.compose.get().pluginId
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidApplicationCompose") {
+            id = libs.plugins.wavecast.android.application.compose.get().pluginId
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidHilt") {
             id = "wavecast.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidTest") {
+            id = "wavecast.android.test"
+            implementationClass = "AndroidTestConventionPlugin"
         }
     }
 }
