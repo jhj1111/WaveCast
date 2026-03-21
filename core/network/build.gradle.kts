@@ -18,5 +18,11 @@ secrets {
 }
 
 dependencies {
-    // Retrofit, OkHttp etc.
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.okhttp.logging)
+    implementation(libs.kotlinx.coroutines.android)
+    
+    // JSON Serialization
+    implementation(libs.kotlinx.serialization.json)
 }
