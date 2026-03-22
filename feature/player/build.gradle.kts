@@ -1,7 +1,5 @@
 plugins {
-    alias(libs.plugins.wavecast.android.library)
-    alias(libs.plugins.wavecast.android.library.compose)
-    alias(libs.plugins.wavecast.android.hilt)
+    alias(libs.plugins.wavecast.android.feature)
 }
 
 android {
@@ -9,6 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:ui"))
+//    implementation(project(":core:ui"))
     implementation(project(":core:media"))
 }

@@ -46,12 +46,16 @@ gradlePlugin {
             implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidHilt") {
-            id = "wavecast.android.hilt"
+            id = libs.plugins.wavecast.android.hilt.get().pluginId
             implementationClass = "AndroidHiltConventionPlugin"
         }
         register("androidTest") {
-            id = "wavecast.android.test"
+            id = libs.plugins.wavecast.android.test.get().pluginId
             implementationClass = "AndroidTestConventionPlugin"
+        }
+        register("androidFeature") {
+            id = libs.plugins.wavecast.android.feature.get().pluginId
+            implementationClass = "AndroidFeatureConventionPlugin"
         }
     }
 }
