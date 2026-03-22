@@ -9,5 +9,8 @@ android {
 }
 
 dependencies {
-    // Add common UI dependencies here
+    // material3
+    implementation(libs.androidx.compose.material.icons.extended)
+    // coil3
+    implementation(libs.coil.compose)
 }
