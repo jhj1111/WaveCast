@@ -15,9 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.wavecast.core.data.model.Podcast
+import com.example.wavecast.core.ui.component.DynamicAsyncImage
 import com.example.wavecast.core.ui.component.LoadingState
 import com.example.wavecast.core.ui.component.PodcastImage
 import com.example.wavecast.core.ui.theme.WaveCastTheme
@@ -25,7 +27,7 @@ import com.example.wavecast.core.ui.theme.spacing
 
 @Composable
 fun LibraryRoute(
-    onPodcastClick: (String) -> Unit,
+    onPodcastClick: (Podcast) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
@@ -33,7 +35,10 @@ fun LibraryRoute(
 
     LibraryScreen(
         uiState = uiState,
-        onPodcastClick = onPodcastClick,
+        onPodcastClick = { podcast ->
+            viewModel.playPodcast(podcast)
+            onPodcastClick(podcast)
+        },
         modifier = modifier
     )
 }
@@ -41,7 +46,7 @@ fun LibraryRoute(
 @Composable
 internal fun LibraryScreen(
     uiState: LibraryUiState,
-    onPodcastClick: (String) -> Unit,
+    onPodcastClick: (Podcast) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = MaterialTheme.spacing
@@ -67,7 +72,7 @@ internal fun LibraryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.empty_library_message),
+                        text = "구독 중인 팟캐스트가 없습니다.\n홈에서 새로운 팟캐스트를 찾아보세요!",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -85,7 +90,7 @@ internal fun LibraryScreen(
                         SubscriptionItem(
                             title = podcast.title,
                             imageUrl = podcast.imageUrl,
-                            onClick = { onPodcastClick(podcast.id) }
+                            onClick = { onPodcastClick(podcast) }
                         )
                     }
                 }
@@ -116,8 +121,15 @@ fun SubscriptionItem(
             .clickable(onClick = onClick)
             .padding(spacing.extraSmall)
     ) {
-        PodcastImage(
-            url = imageUrl,
+//        PodcastImage(
+//            url = imageUrl,
+//            contentDescription = title,
+//            modifier = Modifier
+//                .aspectRatio(1f)
+//                .fillMaxWidth()
+//        )
+        DynamicAsyncImage(
+            imageUrl = imageUrl,
             contentDescription = title,
             modifier = Modifier
                 .aspectRatio(1f)

@@ -7,5 +7,5 @@ android {
 }
 
 dependencies {
-    // Dependencies are mostly handled by the feature convention plugin
+    implementation(project(":core:domain"))
 }
