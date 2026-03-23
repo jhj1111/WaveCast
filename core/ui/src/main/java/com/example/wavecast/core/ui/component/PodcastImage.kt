@@ -28,15 +28,7 @@ fun PodcastImage(
         modifier = modifier.clip(MaterialTheme.shapes.medium),
         contentScale = contentScale,
         loading = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 2.dp
-                )
-            }
+            LoadingState()
         },
         error = {
             Box(
