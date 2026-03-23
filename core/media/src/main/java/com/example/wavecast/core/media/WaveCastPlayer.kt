@@ -68,6 +68,16 @@ class WaveCastPlayer @Inject constructor(
     fun play() = player.play()
     fun pause() = player.pause()
     fun stop() = player.stop()
+
+    fun seekForward() {
+        val nextPos = player.currentPosition + 30_000 // 30초 앞으로
+        player.seekTo(nextPos.coerceAtMost(player.duration))
+    }
+
+    fun seekBack() {
+        val prevPos = player.currentPosition - 10_000 // 10초 뒤로
+        player.seekTo(prevPos.coerceAtLeast(0L))
+    }
     
     // 팟캐스트 재생을 위한 기초 메서드
     fun playPodcast(url: String, title: String, author: String, imageUrl: String) {
