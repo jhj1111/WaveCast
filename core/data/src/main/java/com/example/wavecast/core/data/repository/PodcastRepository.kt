@@ -1,5 +1,6 @@
 package com.example.wavecast.core.data.repository
 
+import com.example.wavecast.core.data.model.Episode
 import com.example.wavecast.core.data.model.Podcast
 import kotlinx.coroutines.flow.Flow
 
@@ -9,4 +10,5 @@ interface PodcastRepository {
     suspend fun getTrendingPodcasts(): List<Podcast>
     suspend fun subscribePodcast(podcast: Podcast)
     suspend fun unsubscribePodcast(id: String)
+    suspend fun getEpisodes(feedUrl: String): List<Episode>
 }

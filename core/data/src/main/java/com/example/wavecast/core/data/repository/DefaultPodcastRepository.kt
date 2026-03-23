@@ -1,16 +1,19 @@
 package com.example.wavecast.core.data.repository
 
+import com.example.wavecast.core.data.model.Episode
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.data.model.asEntity
 import com.example.wavecast.core.data.model.asExternalModel
 import com.example.wavecast.core.database.dao.PodcastDao
 import com.example.wavecast.core.network.api.PodcastIndexApi
+import com.example.wavecast.core.network.api.RssService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DefaultPodcastRepository @Inject constructor(
     private val api: PodcastIndexApi,
+    private val rssService: RssService,
     private val dao: PodcastDao
 ) : PodcastRepository {
 
@@ -34,5 +37,9 @@ class DefaultPodcastRepository @Inject constructor(
 
     override suspend fun unsubscribePodcast(id: String) {
         dao.deletePodcastById(id)
+    }
+
+    override suspend fun getEpisodes(feedUrl: String): List<Episode> {
+        return rssService.fetchEpisodes(feedUrl).map { it.asExternalModel() }
     }
 }

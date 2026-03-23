@@ -2,6 +2,7 @@ package com.example.wavecast.core.data.model
 
 import com.example.wavecast.core.database.model.PodcastEntity
 import com.example.wavecast.core.network.model.PodcastFeedResponse
+import com.example.wavecast.core.network.model.EpisodeResponse
 
 fun PodcastFeedResponse.asExternalModel() = Podcast(
     id = id.toString(),
@@ -31,3 +32,10 @@ fun Podcast.asEntity() = PodcastEntity(
     feedUrl = feedUrl,
     isSubscribed = isSubscribed
 )
+
+fun EpisodeResponse.asExternalModel() = Episode(
+    title = title,
+    audioUrl = audioUrl,
+    imageUrl = imageUrl
+)
+
