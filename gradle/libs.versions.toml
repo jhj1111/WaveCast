@@ -12,6 +12,11 @@ materialIconsExtended = "1.7.8"
 activityCompose = "1.13.0"
 composeBom = "2026.03.00"
 androidxTracing = "1.3.0"
+# moshi
+moshiKotlin = "1.15.2"
+moshiAdapters = "1.15.2"
+moshiKotlinCodegen = "1.15.2"
+converterMoshi = "3.0.0"
 # 추가 기술 스택
 hilt = "2.59.2"
 hiltNavigation = "1.3.0"
@@ -71,6 +76,12 @@ retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.r
 retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
+# moshi
+moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshiAdapters" }
+moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegen" }
+converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "converterMoshi" }
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiKotlin" }
+
 # Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -126,3 +137,6 @@ wavecast-android-application-compose = { id = "wavecast.android.application.comp
 wavecast-android-hilt = { id = "wavecast.android.hilt" }
 wavecast-android-feature = { id = "wavecast.android.feature" }
 wavecast-android-test = { id = "wavecast.android.test" }
+
+[bundles]
+moshi = ["moshi-adapters", "converter-moshi", "moshi-kotlin"]
