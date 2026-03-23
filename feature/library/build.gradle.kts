@@ -7,6 +7,5 @@ android {
 }
 
 dependencies {
-//    implementation(project(":core:ui"))
-//    implementation(project(":core:data"))
+    // Dependencies are mostly handled by the feature convention plugin
 }
