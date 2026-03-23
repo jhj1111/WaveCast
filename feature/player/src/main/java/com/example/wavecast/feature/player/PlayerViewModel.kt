@@ -23,4 +23,12 @@ class PlayerViewModel @Inject constructor(
             waveCastPlayer.play()
         }
     }
+
+    fun skipForward() {
+        waveCastPlayer.seekForward()
+    }
+
+    fun skipBackward() {
+        waveCastPlayer.seekBack()
+    }
 }

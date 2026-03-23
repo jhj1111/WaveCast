@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.wavecast.core.media.model.PlayerState
-import com.example.wavecast.core.ui.component.PodcastImage
+import com.example.wavecast.core.ui.component.DynamicAsyncImage
 import com.example.wavecast.core.ui.component.WaveCastIcons
 import com.example.wavecast.core.ui.theme.WaveCastTheme
 import com.example.wavecast.core.ui.theme.spacing
@@ -26,11 +26,12 @@ fun MiniPlayerRoute(
 ) {
     val playerState by viewModel.playerState.collectAsState()
 
-    // 제목이 있을 때만 플레이어를 표시 (재생 이력이 있을 때)
     if (playerState.currentTitle != null) {
         MiniPlayer(
             playerState = playerState,
             onPlayPauseClick = viewModel::togglePlayPause,
+            onSkipForwardClick = viewModel::skipForward,
+            onSkipBackwardClick = viewModel::skipBackward,
             modifier = modifier
         )
     }
@@ -40,6 +41,8 @@ fun MiniPlayerRoute(
 fun MiniPlayer(
     playerState: PlayerState,
     onPlayPauseClick: () -> Unit,
+    onSkipForwardClick: () -> Unit,
+    onSkipBackwardClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = MaterialTheme.spacing
@@ -52,7 +55,6 @@ fun MiniPlayer(
         tonalElevation = 8.dp
     ) {
         Column {
-            // 재생 진행바 (간단히 표시)
             val progress = if (playerState.duration > 0) {
                 playerState.currentPosition.toFloat() / playerState.duration.toFloat()
             } else 0f
@@ -70,8 +72,8 @@ fun MiniPlayer(
                     .padding(horizontal = spacing.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                PodcastImage(
-                    url = playerState.currentImageUrl ?: "",
+                DynamicAsyncImage(
+                    imageUrl = playerState.currentImageUrl ?: "",
                     contentDescription = null,
                     modifier = Modifier.size(40.dp)
                 )
@@ -95,10 +97,24 @@ fun MiniPlayer(
                     )
                 }
 
+                IconButton(onClick = onSkipBackwardClick) {
+                    Icon(
+                        imageVector = WaveCastIcons.SkipBackward,
+                        contentDescription = "Skip Back 10s"
+                    )
+                }
+
                 IconButton(onClick = onPlayPauseClick) {
                     Icon(
                         imageVector = if (playerState.isPlaying) WaveCastIcons.Pause else WaveCastIcons.Play,
                         contentDescription = if (playerState.isPlaying) "Pause" else "Play"
+                    )
+                }
+
+                IconButton(onClick = onSkipForwardClick) {
+                    Icon(
+                        imageVector = WaveCastIcons.SkipForward,
+                        contentDescription = "Skip Forward 30s"
                     )
                 }
             }
@@ -118,7 +134,9 @@ fun MiniPlayerPreview() {
                 duration = 100L,
                 currentPosition = 30L
             ),
-            onPlayPauseClick = {}
+            onPlayPauseClick = {},
+            onSkipForwardClick = {},
+            onSkipBackwardClick = {}
         )
     }
 }
