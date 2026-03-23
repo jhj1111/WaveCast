@@ -57,5 +57,9 @@ gradlePlugin {
             id = libs.plugins.wavecast.android.feature.get().pluginId
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = libs.plugins.wavecast.jvm.library.get().pluginId
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
     }
 }

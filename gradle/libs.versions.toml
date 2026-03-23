@@ -136,6 +136,7 @@ wavecast-android-library-compose = { id = "wavecast.android.library.compose" }
 wavecast-android-application-compose = { id = "wavecast.android.application.compose" }
 wavecast-android-hilt = { id = "wavecast.android.hilt" }
 wavecast-android-feature = { id = "wavecast.android.feature" }
+wavecast-jvm-library = { id = "wavecast.jvm.library" }
 wavecast-android-test = { id = "wavecast.android.test" }
 
 [bundles]
