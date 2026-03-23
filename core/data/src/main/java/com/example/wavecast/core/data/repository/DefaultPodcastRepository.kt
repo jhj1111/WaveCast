@@ -23,6 +23,12 @@ class DefaultPodcastRepository @Inject constructor(
         }
     }
 
+    override fun isPodcastSubscribed(id: String): Flow<Boolean> {
+        return dao.getAllPodcasts().map { entities ->
+            entities.any { it.id == id }
+        }
+    }
+
     override suspend fun searchPodcasts(term: String): List<Podcast> {
         return api.searchPodcasts(term).feeds.map { it.asExternalModel() }
     }
