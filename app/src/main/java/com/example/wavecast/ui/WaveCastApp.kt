@@ -34,8 +34,8 @@ fun WaveCastApp() {
     val currentDestination = mainDestinations[currentKey] ?: MainDestination.Home
 
     val myEntryProvider = entryProvider {
-        homeEntry()
-        libraryEntry()
+        homeEntry(onPodcastClick = { /* Handle navigation to detail later */ })
+        libraryEntry(onPodcastClick = { /* Handle navigation to detail later */ })
 //        searchEntry()
     }
 

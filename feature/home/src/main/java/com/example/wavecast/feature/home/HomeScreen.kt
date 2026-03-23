@@ -1,12 +1,26 @@
 package com.example.wavecast.feature.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,13 +30,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.ui.component.DynamicAsyncImage
 import com.example.wavecast.core.ui.component.LoadingState
 import com.example.wavecast.core.ui.component.WaveCastIcons
+import com.example.wavecast.core.ui.config.SAMPLE_PLACEHOLDER_URL
 import com.example.wavecast.core.ui.theme.WaveCastTheme
 import com.example.wavecast.core.ui.theme.spacing
 
@@ -42,6 +56,7 @@ fun HomeRoute(
             viewModel.playPodcast(podcast)
             onPodcastClick(podcast)
         },
+        onToggleSubscription = viewModel::toggleSubscription,
         modifier = modifier
     )
 }
@@ -52,6 +67,7 @@ internal fun HomeScreen(
     onSearchQueryChanged: (String) -> Unit,
     onSearchTriggered: () -> Unit,
     onPodcastClick: (Podcast) -> Unit,
+    onToggleSubscription: (Podcast) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = MaterialTheme.spacing
@@ -106,10 +122,11 @@ internal fun HomeScreen(
                     contentPadding = PaddingValues(bottom = spacing.large)
                 ) {
                     items(displayList, key = { it.id }) { podcast ->
+                        val isSubscribed = uiState.subscribedPodcastIds.contains(podcast.id)
                         PodcastItem(
-                            title = podcast.title,
-                            author = podcast.author,
-                            imageUrl = podcast.imageUrl,
+                            podcast = podcast,
+                            isSubscribed = isSubscribed,
+                            onToggleSubscription = { onToggleSubscription(podcast) },
                             onClick = { onPodcastClick(podcast) }
                         )
                     }
@@ -126,9 +143,9 @@ internal fun HomeScreen(
 
 @Composable
 fun PodcastItem(
-    title: String,
-    author: String,
-    imageUrl: String,
+    podcast: Podcast,
+    isSubscribed: Boolean,
+    onToggleSubscription: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -140,23 +157,33 @@ fun PodcastItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DynamicAsyncImage(
-            imageUrl = imageUrl,
-            contentDescription = title,
+            imageUrl = podcast.imageUrl,
+            contentDescription = podcast.title,
             modifier = Modifier.size(spacing.extraExtraLarge),
         )
         
         Spacer(modifier = Modifier.width(spacing.medium))
         
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = title,
+                text = podcast.title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
             Text(
-                text = author,
+                text = podcast.author,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+        }
+
+        IconButton(onClick = onToggleSubscription) {
+            Icon(
+                imageVector = if (isSubscribed) WaveCastIcons.Favorite else WaveCastIcons.FavoriteBorder,
+                contentDescription = if (isSubscribed) "Unsubscribe" else "Subscribe",
+                tint = if (isSubscribed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }
@@ -169,13 +196,15 @@ fun HomeScreenPreview() {
         HomeScreen(
             uiState = HomeUiState.Success(
                 trendingPodcasts = listOf(
-                    Podcast("1", "Preview 1", "Author 1", "", "", "https://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg"),
+                    Podcast("1", "Preview 1", "Author 1", "", "", SAMPLE_PLACEHOLDER_URL),
                     Podcast("2", "Preview 2", "Author 2", "", "", "")
-                )
+                ),
+                subscribedPodcastIds = setOf("2")
             ),
             onSearchQueryChanged = {},
             onSearchTriggered = {},
-            onPodcastClick = {}
+            onPodcastClick = {},
+            onToggleSubscription = {}
         )
     }
 }
