@@ -19,7 +19,11 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.wavecast.R
 import com.example.wavecast.core.ui.component.WaveCastTopAppBar
 import com.example.wavecast.feature.home.navigation.HomeNavKey
+import com.example.wavecast.feature.home.navigation.PodcastDetailNavKey
+import com.example.wavecast.feature.home.navigation.SearchNavKey
 import com.example.wavecast.feature.home.navigation.homeEntry
+import com.example.wavecast.feature.home.navigation.podcastDetailEntry
+import com.example.wavecast.feature.library.navigation.LibraryNavKey
 import com.example.wavecast.feature.library.navigation.libraryEntry
 import com.example.wavecast.feature.player.MiniPlayerRoute
 import com.example.wavecast.feature.player.navigation.PlayerNavKey
@@ -32,13 +36,25 @@ import com.example.wavecast.navigation.mainDestinations
 fun WaveCastApp() {
     val backStack = rememberSaveable { mutableStateListOf<NavKey>(HomeNavKey) }
     val currentKey = backStack.last()
-    val currentDestination = mainDestinations[currentKey] ?: MainDestination.Home
+    val currentDestination = when (val key = backStack.last()) {
+        is HomeNavKey -> MainDestination.Home
+        is SearchNavKey -> MainDestination.Search
+        is LibraryNavKey -> MainDestination.Library
+        is PlayerNavKey -> MainDestination.Player
+        is PodcastDetailNavKey -> MainDestination.PodcastDetail(key.podcast)
+        else -> MainDestination.Home
+    }
 
     val myEntryProvider = entryProvider {
-        homeEntry(onPodcastClick = { /* Handle navigation to detail later */ })
-        libraryEntry(onPodcastClick = { /* Handle navigation to detail later */ })
+        homeEntry(onPodcastClick = { podcast ->
+            backStack.add(PodcastDetailNavKey(podcast))
+        })
+        libraryEntry(onPodcastClick = { podcast ->
+            backStack.add(PodcastDetailNavKey(podcast))
+        })
+        podcastDetailEntry(onBackClick = { backStack.removeLastOrNull() })
         playerEntry(onBackClick = { backStack.removeLastOrNull() })
-        entry<MainDestination.Search> {
+        entry<SearchNavKey> {
             Text(
                 text = stringResource(R.string.search) + " Screen Placeholder",
                 modifier = Modifier.fillMaxSize()
@@ -46,33 +62,36 @@ fun WaveCastApp() {
         }
     }
 
+    val isPlayerScreen = currentDestination == MainDestination.Player
+    val isDetailScreen = currentDestination is MainDestination.PodcastDetail
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            // Player 화면일 때는 상단바를 숨기거나 별도 처리 (PlayerScreen 내부에 이미 있음)
-            if (currentDestination != MainDestination.Player) {
+            if (!isPlayerScreen && !isDetailScreen) {
                 WaveCastTopAppBar(title = stringResource(currentDestination.label))
             }
         },
         bottomBar = {
-            // Player 화면이 아닐 때만 하단바와 미니플레이어 표시
-            if (currentDestination != MainDestination.Player) {
+            if (!isPlayerScreen) {
                 Column {
                     MiniPlayerRoute(onMiniPlayerClick = {
                         backStack.add(PlayerNavKey)
                     })
-                    WaveCastBottomBar(
-                        destinations = bottomBarDestinations,
-                        currentDestination = currentDestination,
-                        onNavigateToDestination = { destination ->
-                            // Find the key for this destination
-                            val key = mainDestinations.entries.find { it.value == destination }?.key
-                            if (key != null && currentKey != key) {
-                                backStack.clear()
-                                backStack.add(key)
+                    if (!isDetailScreen) {
+                        WaveCastBottomBar(
+                            destinations = bottomBarDestinations,
+                            currentDestination = currentDestination,
+                            onNavigateToDestination = { destination ->
+                                // Find key for destination
+                                val key = mainDestinations.entries.find { it.value == destination }?.key
+                                if (key != null && currentKey != key) {
+                                    backStack.clear()
+                                    backStack.add(key as NavKey)
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

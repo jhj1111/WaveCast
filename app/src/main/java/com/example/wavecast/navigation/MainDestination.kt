@@ -4,8 +4,10 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import com.example.wavecast.R
+import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.ui.component.WaveCastIcons
 import com.example.wavecast.feature.home.navigation.HomeNavKey
+import com.example.wavecast.feature.home.navigation.PodcastDetailNavKey
 import com.example.wavecast.feature.home.navigation.SearchNavKey
 import com.example.wavecast.feature.library.navigation.LibraryNavKey
 import com.example.wavecast.feature.player.navigation.PlayerNavKey
@@ -43,14 +45,21 @@ sealed interface MainDestination : NavKey {
         override val unselectedIcon = null
         override val label = R.string.nav_player
     }
+
+    @Serializable
+    data class PodcastDetail(val podcast: Podcast) : MainDestination {
+        override val selectedIcon = null
+        override val unselectedIcon = null
+        override val label = R.string.nav_detail
+    }
 }
 
 val mainDestinations = mapOf(
-//    MainDestination.Home::class.qualifiedName!! to MainDestination.Home,
     HomeNavKey to MainDestination.Home,
     SearchNavKey to MainDestination.Search,
     LibraryNavKey to MainDestination.Library,
-    PlayerNavKey to MainDestination.Player
+    PlayerNavKey to MainDestination.Player,
+    PodcastDetailNavKey to MainDestination.PodcastDetail(Podcast("", "", "", "", "", "")) // placeholder for mapping
 )
 
 val bottomBarDestinations = listOf(

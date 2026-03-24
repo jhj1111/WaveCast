@@ -53,7 +53,7 @@ fun HomeRoute(
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onSearchTriggered = viewModel::performSearch,
         onPodcastClick = { podcast ->
-            viewModel.playPodcast(podcast)
+//            viewModel.playPodcast(podcast)
             onPodcastClick(podcast)
         },
         onToggleSubscription = viewModel::toggleSubscription,
