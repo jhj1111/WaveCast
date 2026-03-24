@@ -22,8 +22,8 @@ class RssService @Inject constructor(
         val response = okHttpClient.newCall(request).execute()
         if (!response.isSuccessful) return@withContext emptyList()
 
-        response.body?.byteStream()?.use { inputStream ->
+        response.body.byteStream().use { inputStream ->
             rssParser.parse(inputStream)
-        } ?: emptyList()
+        }
     }
 }
