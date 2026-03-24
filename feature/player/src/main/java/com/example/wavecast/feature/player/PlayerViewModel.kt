@@ -31,4 +31,8 @@ class PlayerViewModel @Inject constructor(
     fun skipBackward() {
         waveCastPlayer.seekBack()
     }
+
+    fun seekTo(position: Float) {
+        waveCastPlayer.seekTo(position.toLong())
+    }
 }

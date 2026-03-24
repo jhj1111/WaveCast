@@ -6,12 +6,14 @@ import androidx.navigation3.runtime.NavKey
 import com.example.wavecast.R
 import com.example.wavecast.core.ui.component.WaveCastIcons
 import com.example.wavecast.feature.home.navigation.HomeNavKey
+import com.example.wavecast.feature.home.navigation.SearchNavKey
 import com.example.wavecast.feature.library.navigation.LibraryNavKey
+import com.example.wavecast.feature.player.navigation.PlayerNavKey
 import kotlinx.serialization.Serializable
 
 sealed interface MainDestination : NavKey {
-    val selectedIcon: ImageVector
-    val unselectedIcon: ImageVector
+    val selectedIcon: ImageVector?
+    val unselectedIcon: ImageVector?
     @get:StringRes val label: Int
 
     @Serializable
@@ -35,11 +37,24 @@ sealed interface MainDestination : NavKey {
         override val label = R.string.nav_library
     }
 
+    @Serializable
+    data object Player : MainDestination {
+        override val selectedIcon = null
+        override val unselectedIcon = null
+        override val label = R.string.nav_player
+    }
 }
 
 val mainDestinations = mapOf(
+//    MainDestination.Home::class.qualifiedName!! to MainDestination.Home,
     HomeNavKey to MainDestination.Home,
+    SearchNavKey to MainDestination.Search,
     LibraryNavKey to MainDestination.Library,
-//    PlayerNavKey to MainDestination.Player,
-//    SearchNavKey to MainDestination.Search,
+    PlayerNavKey to MainDestination.Player
+)
+
+val bottomBarDestinations = listOf(
+    MainDestination.Home,
+    MainDestination.Search,
+    MainDestination.Library,
 )
