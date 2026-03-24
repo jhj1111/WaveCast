@@ -1,11 +1,21 @@
 package com.example.wavecast.feature.library
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,13 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.ui.component.DynamicAsyncImage
 import com.example.wavecast.core.ui.component.LoadingState
-import com.example.wavecast.core.ui.component.PodcastImage
 import com.example.wavecast.core.ui.theme.WaveCastTheme
 import com.example.wavecast.core.ui.theme.spacing
 
@@ -72,7 +80,7 @@ internal fun LibraryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "구독 중인 팟캐스트가 없습니다.\n홈에서 새로운 팟캐스트를 찾아보세요!",
+                        text = stringResource(R.string.empty_library_message),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -100,7 +108,7 @@ internal fun LibraryScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = uiState.message, color = MaterialTheme.colorScheme.error)
+                    Text(text = uiState.message ?: stringResource(R.string.unknown_error_message), color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -121,13 +129,6 @@ fun SubscriptionItem(
             .clickable(onClick = onClick)
             .padding(spacing.extraSmall)
     ) {
-//        PodcastImage(
-//            url = imageUrl,
-//            contentDescription = title,
-//            modifier = Modifier
-//                .aspectRatio(1f)
-//                .fillMaxWidth()
-//        )
         DynamicAsyncImage(
             imageUrl = imageUrl,
             contentDescription = title,

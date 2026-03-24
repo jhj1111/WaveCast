@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.data.repository.PodcastRepository
+import com.example.wavecast.core.data.util.Result
+import com.example.wavecast.core.data.util.asResult
 import com.example.wavecast.core.domain.PlayPodcastUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +19,7 @@ sealed interface LibraryUiState {
     object Loading : LibraryUiState
     data class Success(val podcasts: List<Podcast>) : LibraryUiState
     object Empty : LibraryUiState
-    data class Error(val message: String) : LibraryUiState
+    data class Error(val message: String? = null) : LibraryUiState
 }
 
 @HiltViewModel
@@ -27,9 +29,16 @@ class LibraryViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<LibraryUiState> = podcastRepository.getSubscribedPodcasts()
-        .map { podcasts ->
-            if (podcasts.isEmpty()) LibraryUiState.Empty
-            else LibraryUiState.Success(podcasts)
+        .asResult()
+        .map { result ->
+            when (result) {
+                is Result.Loading -> LibraryUiState.Loading
+                is Result.Success -> {
+                    if (result.data.isEmpty()) LibraryUiState.Empty
+                    else LibraryUiState.Success(result.data)
+                }
+                is Result.Error -> LibraryUiState.Error(result.exception?.message)
+            }
         }
         .stateIn(
             scope = viewModelScope,
