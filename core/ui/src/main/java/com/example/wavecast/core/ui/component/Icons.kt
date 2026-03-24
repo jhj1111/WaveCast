@@ -1,13 +1,16 @@
 package com.example.wavecast.core.ui.component
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Forward30
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Favorite
@@ -29,4 +32,7 @@ object WaveCastIcons {
     val SkipBackward = Icons.Filled.Replay10
     val Favorite = Icons.Filled.Favorite
     val FavoriteBorder = Icons.Outlined.Favorite
+    val GoBack = Icons.AutoMirrored.Filled.ArrowBack
+    val PlayCircle = Icons.Filled.PlayCircle
+    val PauseCircle = Icons.Filled.PauseCircle
 }
