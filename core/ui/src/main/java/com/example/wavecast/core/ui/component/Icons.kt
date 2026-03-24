@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Favorite
@@ -34,5 +35,6 @@ object WaveCastIcons {
     val FavoriteBorder = Icons.Outlined.Favorite
     val GoBack = Icons.AutoMirrored.Filled.ArrowBack
     val PlayCircle = Icons.Filled.PlayCircle
+    val PlayCircleOutline = Icons.Default.PlayCircleOutline
     val PauseCircle = Icons.Filled.PauseCircle
 }
