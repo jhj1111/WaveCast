@@ -26,10 +26,19 @@ class ExampleStartupBenchmark {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
+    // 1. 최적화 없는 상태 측정
     @Test
-    fun startup() = benchmarkRule.measureRepeated(
+    fun startupNoCompilation() = startup(CompilationMode.None())
+
+    // 2. Baseline Profile 적용 상태 측정
+    @Test
+    fun startupBaselineProfile() = startup(CompilationMode.Partial())
+
+
+    fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
         packageName = "com.example.wavecast",
         metrics = listOf(StartupTimingMetric()),
+        compilationMode = compilationMode, // 여기서 모드 설정
         iterations = 5,
         startupMode = StartupMode.COLD
     ) {
