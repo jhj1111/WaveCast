@@ -30,4 +30,9 @@ dependencies {
     implementation(libs.bundles.moshi)
     // JSON Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Test
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
 }

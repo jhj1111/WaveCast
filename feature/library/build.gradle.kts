@@ -8,4 +8,8 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
+
+    implementation(libs.mockk)
+    implementation(libs.turbine)
+    implementation(libs.kotlinx.coroutines.test)
 }

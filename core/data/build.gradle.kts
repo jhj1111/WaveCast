@@ -10,4 +10,9 @@ android {
 dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:database"))
+
+    // Test
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

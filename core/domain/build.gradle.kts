@@ -12,5 +12,11 @@ dependencies {
     implementation(project(":core:media"))
     
     implementation(libs.kotlinx.coroutines.android)
-//    implementation(libs.javax.inject)
+
+    // Test
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
