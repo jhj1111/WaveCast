@@ -1,16 +1,15 @@
 plugins {
     alias(libs.plugins.wavecast.android.test)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
     namespace = "com.example.wavecast.benchmark"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.wavecast.android.application)
     alias(libs.plugins.wavecast.android.application.compose)
     alias(libs.plugins.wavecast.android.hilt)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -51,5 +52,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    
+    // Baseline Profile
+    baselineProfile(project(":benchmark"))
 }
 
+baselineProfile {
+    // Our benchmark module is called :benchmark
+    filter {
+        include("com.example.wavecast.**")
+    }
+}
