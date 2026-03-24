@@ -36,6 +36,7 @@ fun Podcast.asEntity() = PodcastEntity(
 fun EpisodeResponse.asExternalModel() = Episode(
     title = title,
     audioUrl = audioUrl,
+    duration = duration,
     imageUrl = imageUrl
 )
 

@@ -1,5 +1,6 @@
 package com.example.wavecast.core.media
 
+import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -36,12 +37,21 @@ class WaveCastPlayer @Inject constructor(
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 updateState {
+                    val newDuration = if (player.duration > 0) player.duration else it.duration
                     it.copy(
                         currentTitle = mediaItem?.mediaMetadata?.title?.toString(),
                         currentAuthor = mediaItem?.mediaMetadata?.artist?.toString(),
                         currentImageUrl = mediaItem?.mediaMetadata?.artworkUri?.toString(),
-                        duration = player.duration.coerceAtLeast(0L)
+                        duration = newDuration
                     )
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_READY) {
+                    updateState {
+                        it.copy(duration = player.duration.coerceAtLeast(0L))
+                    }
                 }
             }
         })
@@ -69,6 +79,10 @@ class WaveCastPlayer @Inject constructor(
     fun pause() = player.pause()
     fun stop() = player.stop()
 
+    fun seekTo(position: Long) {
+        player.seekTo(position)
+    }
+
     fun seekForward() {
         val nextPos = player.currentPosition + 30_000 // 30초 앞으로
         player.seekTo(nextPos.coerceAtMost(player.duration))
@@ -80,7 +94,7 @@ class WaveCastPlayer @Inject constructor(
     }
     
     // 팟캐스트 재생을 위한 기초 메서드
-    fun playPodcast(url: String, title: String, author: String, imageUrl: String) {
+    fun playPodcast(url: String, title: String, author: String, imageUrl: String, duration: Long = 0L) {
         val mediaItem = MediaItem.Builder()
             .setUri(url)
             .setMediaId(url)
@@ -92,7 +106,13 @@ class WaveCastPlayer @Inject constructor(
                     .build()
             )
             .build()
-        
+
+        Log.d("TAG-WaveCastPlayer", "duration: $duration")
+        // 만약 RSS에서 받은 duration이 있다면 초기값으로 설정
+        if (duration > 0) {
+            updateState { it.copy(duration = duration) }
+        }
+
         player.setMediaItem(mediaItem)
         player.prepare()
         player.play()

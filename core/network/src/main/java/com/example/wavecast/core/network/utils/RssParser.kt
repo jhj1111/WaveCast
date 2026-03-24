@@ -8,6 +8,8 @@ import java.io.InputStream
 class RssParser {
     fun parse(inputStream: InputStream): List<EpisodeResponse> {
         val parser = Xml.newPullParser()
+        // itunes:duration 등을 읽기 위해 네임스페이스 활성화 가능하지만, 
+        // 간단하게 처리하기 위해 태그 이름으로 접근합니다.
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
         parser.setInput(inputStream, null)
         
@@ -17,6 +19,7 @@ class RssParser {
         var currentTitle: String? = null
         var currentAudioUrl: String? = null
         var currentImageUrl: String? = null
+        var currentDuration: String? = null
         
         while (eventType != XmlPullParser.END_DOCUMENT) {
             val tagName = parser.name
@@ -30,6 +33,9 @@ class RssParser {
                         "itunes:image" -> {
                             currentImageUrl = parser.getAttributeValue(null, "href")
                         }
+                        "itunes:duration" -> {
+                            currentDuration = parser.nextText()
+                        }
                     }
                 }
                 XmlPullParser.END_TAG -> {
@@ -39,13 +45,15 @@ class RssParser {
                                 EpisodeResponse(
                                     title = currentTitle,
                                     audioUrl = currentAudioUrl,
-                                    imageUrl = currentImageUrl
+                                    imageUrl = currentImageUrl,
+                                    duration = currentDuration
                                 )
                             )
                         }
                         currentTitle = null
                         currentAudioUrl = null
                         currentImageUrl = null
+                        currentDuration = null
                     }
                 }
             }
