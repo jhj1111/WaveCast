@@ -39,6 +39,8 @@ androidDesugarJdkLibs = "2.1.5"
 appcompat = "1.7.1"
 material = "1.13.0"
 uiTestJunit4 = "1.10.5"
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.4.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -116,6 +118,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "uiTestJunit4" }
 androidx-tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", version.ref = "androidxTracing" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -138,6 +142,7 @@ wavecast-android-hilt = { id = "wavecast.android.hilt" }
 wavecast-android-feature = { id = "wavecast.android.feature" }
 wavecast-jvm-library = { id = "wavecast.jvm.library" }
 wavecast-android-test = { id = "wavecast.android.test" }
+android-test = { id = "com.android.test", version.ref = "agp" }
 
 [bundles]
 moshi = ["moshi-adapters", "converter-moshi", "moshi-kotlin"]
