@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    // SplashScreen
+    implementation(libs.androidx.core.splashscreen)
 
     // Test
     testImplementation(libs.junit)
