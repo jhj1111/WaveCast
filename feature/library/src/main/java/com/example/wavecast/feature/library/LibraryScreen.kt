@@ -15,9 +15,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,9 +32,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.ui.component.DynamicAsyncImage
+import com.example.wavecast.core.ui.component.ErrorState
 import com.example.wavecast.core.ui.component.LoadingState
 import com.example.wavecast.core.ui.theme.WaveCastTheme
 import com.example.wavecast.core.ui.theme.spacing
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LibraryRoute(
@@ -40,11 +45,23 @@ fun LibraryRoute(
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is LibraryEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(effect.message)
+                }
+            }
+        }
+    }
 
     LibraryScreen(
         uiState = uiState,
+        onIntent = viewModel::handleIntent,
         onPodcastClick = { podcast ->
-            viewModel.playPodcast(podcast)
+            viewModel.handleIntent(LibraryIntent.PlayPodcast(podcast))
             onPodcastClick(podcast)
         },
         modifier = modifier
@@ -54,6 +71,7 @@ fun LibraryRoute(
 @Composable
 internal fun LibraryScreen(
     uiState: LibraryUiState,
+    onIntent: (LibraryIntent) -> Unit,
     onPodcastClick: (Podcast) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -104,12 +122,10 @@ internal fun LibraryScreen(
                 }
             }
             is LibraryUiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = uiState.message ?: stringResource(R.string.unknown_error_message), color = MaterialTheme.colorScheme.error)
-                }
+                ErrorState(
+                    message = uiState.message ?: stringResource(R.string.unknown_error_message),
+                    onRetry = { onIntent(LibraryIntent.Retry) }
+                )
             }
         }
     }
@@ -157,6 +173,7 @@ fun LibraryScreenPreview() {
                     Podcast("2", "Kotlin Talk", "JetBrains", "", "", "")
                 )
             ),
+            onIntent = {},
             onPodcastClick = {}
         )
     }
@@ -167,7 +184,8 @@ fun LibraryScreenPreview() {
 fun LibraryScreenEmptyPreview() {
     WaveCastTheme {
         LibraryScreen(
-            uiState = LibraryUiState.Empty,
+            uiState = LibraryUiState.Empty(),
+            onIntent = {},
             onPodcastClick = {}
         )
     }

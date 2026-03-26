@@ -3,6 +3,7 @@ package com.example.wavecast.feature.library
 import app.cash.turbine.test
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.data.repository.PodcastRepository
+import com.example.wavecast.core.data.util.NetworkMonitor
 import com.example.wavecast.core.domain.PlayPodcastUseCase
 import io.mockk.coEvery
 import io.mockk.every
@@ -22,6 +23,7 @@ class LibraryViewModelTest {
 
     private lateinit var podcastRepository: PodcastRepository
     private lateinit var playPodcastUseCase: PlayPodcastUseCase
+    private lateinit var networkMonitor: NetworkMonitor
     private lateinit var viewModel: LibraryViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -39,7 +41,7 @@ class LibraryViewModelTest {
         every { podcastRepository.getSubscribedPodcasts() } returns flowOf(podcasts)
 
         // When
-        viewModel = LibraryViewModel(podcastRepository, playPodcastUseCase)
+        viewModel = LibraryViewModel(podcastRepository, playPodcastUseCase, networkMonitor)
 
         // Then
         viewModel.uiState.test {
@@ -55,7 +57,7 @@ class LibraryViewModelTest {
         every { podcastRepository.getSubscribedPodcasts() } returns flowOf(emptyList())
 
         // When
-        viewModel = LibraryViewModel(podcastRepository, playPodcastUseCase)
+        viewModel = LibraryViewModel(podcastRepository, playPodcastUseCase, networkMonitor)
 
         // Then
         viewModel.uiState.test {

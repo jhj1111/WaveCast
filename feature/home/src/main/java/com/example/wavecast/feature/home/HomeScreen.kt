@@ -20,9 +20,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -35,11 +38,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.wavecast.core.data.model.Podcast
 import com.example.wavecast.core.ui.component.DynamicAsyncImage
+import com.example.wavecast.core.ui.component.ErrorState
 import com.example.wavecast.core.ui.component.LoadingState
 import com.example.wavecast.core.ui.component.WaveCastIcons
 import com.example.wavecast.core.ui.config.SAMPLE_PLACEHOLDER_URL
 import com.example.wavecast.core.ui.theme.WaveCastTheme
 import com.example.wavecast.core.ui.theme.spacing
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeRoute(
@@ -48,16 +53,28 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is HomeEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(effect.message)
+                }
+                is HomeEffect.NavigateToPlayer -> {
+                    // Navigate to player is handled via nav key in onPodcastClick usually
+                }
+            }
+        }
+    }
 
     HomeScreen(
         uiState = uiState,
-        onSearchQueryChanged = viewModel::onSearchQueryChanged,
-        onSearchTriggered = viewModel::performSearch,
+        onIntent = viewModel::handleIntent,
         onPodcastClick = { podcast ->
-//            viewModel.playPodcast(podcast)
+            viewModel.handleIntent(HomeIntent.PlayPodcast(podcast))
             onPodcastClick(podcast)
         },
-        onToggleSubscription = viewModel::toggleSubscription,
         modifier = modifier
     )
 }
@@ -65,10 +82,8 @@ fun HomeRoute(
 @Composable
 internal fun HomeScreen(
     uiState: HomeUiState,
-    onSearchQueryChanged: (String) -> Unit,
-    onSearchTriggered: () -> Unit,
+    onIntent: (HomeIntent) -> Unit,
     onPodcastClick: (Podcast) -> Unit,
-    onToggleSubscription: (Podcast) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val spacing = MaterialTheme.spacing
@@ -82,7 +97,7 @@ internal fun HomeScreen(
         // 검색 바
         OutlinedTextField(
             value = if (uiState is HomeUiState.Success) uiState.searchQuery else "",
-            onValueChange = onSearchQueryChanged,
+            onValueChange = { onIntent(HomeIntent.OnSearchQueryChanged(it)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = spacing.medium),
@@ -90,18 +105,19 @@ internal fun HomeScreen(
             leadingIcon = { Icon(WaveCastIcons.Search, contentDescription = null) },
             trailingIcon = {
                 if (uiState is HomeUiState.Success && uiState.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { onSearchQueryChanged("") }) {
+                    IconButton(onClick = { onIntent(HomeIntent.ClearSearch) }) {
                         Icon(WaveCastIcons.More, contentDescription = "Clear")
                     }
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = {
-                onSearchTriggered()
+                onIntent(HomeIntent.PerformSearch)
                 keyboardController?.hide()
             }),
             singleLine = true,
-            shape = MaterialTheme.shapes.large
+            shape = MaterialTheme.shapes.large,
+            enabled = uiState !is HomeUiState.Loading
         )
 
         when (uiState) {
@@ -112,32 +128,40 @@ internal fun HomeScreen(
                 val titleRes = if (uiState.isSearching) R.string.search_hint else R.string.popular_podcasts
                 val displayList = if (uiState.isSearching) uiState.searchResults else uiState.trendingPodcasts
 
-                Text(
-                    text = stringResource(titleRes),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(bottom = spacing.medium)
-                )
+                if (!uiState.isOnline && displayList.isEmpty()) {
+                    ErrorState(
+                        message = stringResource(R.string.network_error_message),
+                        onRetry = { onIntent(HomeIntent.Retry) }
+                    )
+                } else {
+                    Text(
+                        text = stringResource(titleRes),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(bottom = spacing.medium)
+                    )
 
-                LazyColumn(
-                    modifier = Modifier.testTag("home:podcastList"),
-                    verticalArrangement = Arrangement.spacedBy(spacing.smallMedium),
-                    contentPadding = PaddingValues(bottom = spacing.large)
-                ) {
-                    items(displayList, key = { it.id }) { podcast ->
-                        val isSubscribed = uiState.subscribedPodcastIds.contains(podcast.id)
-                        PodcastItem(
-                            podcast = podcast,
-                            isSubscribed = isSubscribed,
-                            onToggleSubscription = { onToggleSubscription(podcast) },
-                            onClick = { onPodcastClick(podcast) }
-                        )
+                    LazyColumn(
+                        modifier = Modifier.testTag("home:podcastList"),
+                        verticalArrangement = Arrangement.spacedBy(spacing.smallMedium),
+                        contentPadding = PaddingValues(bottom = spacing.large)
+                    ) {
+                        items(displayList, key = { it.id }) { podcast ->
+                            val isSubscribed = uiState.subscribedPodcastIds.contains(podcast.id)
+                            PodcastItem(
+                                podcast = podcast,
+                                isSubscribed = isSubscribed,
+                                onToggleSubscription = { onIntent(HomeIntent.ToggleSubscription(podcast)) },
+                                onClick = { onPodcastClick(podcast) }
+                            )
+                        }
                     }
                 }
             }
             is HomeUiState.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = uiState.message, color = MaterialTheme.colorScheme.error)
-                }
+                ErrorState(
+                    message = if (!uiState.isOnline) stringResource(R.string.network_error_message) else uiState.message,
+                    onRetry = { onIntent(HomeIntent.Retry) }
+                )
             }
         }
     }
@@ -203,10 +227,8 @@ fun HomeScreenPreview() {
                 ),
                 subscribedPodcastIds = setOf("2")
             ),
-            onSearchQueryChanged = {},
-            onSearchTriggered = {},
             onPodcastClick = {},
-            onToggleSubscription = {}
+            onIntent = {}
         )
     }
 }
