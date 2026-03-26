@@ -2,6 +2,7 @@ package com.example.wavecast.core.ui.component
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Forward30
 import androidx.compose.material.icons.filled.Home
@@ -37,4 +38,5 @@ object WaveCastIcons {
     val PlayCircle = Icons.Filled.PlayCircle
     val PlayCircleOutline = Icons.Default.PlayCircleOutline
     val PauseCircle = Icons.Filled.PauseCircle
+    val ErrorOutline = Icons.Filled.ErrorOutline
 }
