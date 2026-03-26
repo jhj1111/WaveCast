@@ -8,6 +8,7 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+secret.properties
 
 # Log/OS Files
 *.log
@@ -194,3 +195,6 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,kotlin,firebase
+
+# 연습용 폴더
+others/

@@ -6,7 +6,7 @@ plugins {
 
 group = "com.example.wavecast.buildlogic"
 
-// Configure the build-logic plugins to target JDK 17
+// Configure the build-logic-temp plugins to target JDK 17
 // This matches the JDK used to build the project, and is not related to what is running on device.
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -27,29 +27,39 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
 }
 
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-//    kotlinOptions {
-//        jvmTarget = "17"
-//    }
-//}
-
 gradlePlugin {
     plugins {
         register("androidApplication") {
-            id = "wavecast.android.application"
+            id = libs.plugins.wavecast.android.application.asProvider().get().pluginId
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibrary") {
-            id = "wavecast.android.library"
+            id = libs.plugins.wavecast.android.library.asProvider().get().pluginId
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidCompose") {
-            id = "wavecast.android.compose"
-            implementationClass = "AndroidComposeConventionPlugin"
+        register("androidLibraryCompose") {
+            id = libs.plugins.wavecast.android.library.compose.get().pluginId
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidApplicationCompose") {
+            id = libs.plugins.wavecast.android.application.compose.get().pluginId
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
         }
         register("androidHilt") {
-            id = "wavecast.android.hilt"
+            id = libs.plugins.wavecast.android.hilt.get().pluginId
             implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidTest") {
+            id = libs.plugins.wavecast.android.test.get().pluginId
+            implementationClass = "AndroidTestConventionPlugin"
+        }
+        register("androidFeature") {
+            id = libs.plugins.wavecast.android.feature.get().pluginId
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
+        register("jvmLibrary") {
+            id = libs.plugins.wavecast.jvm.library.get().pluginId
+            implementationClass = "JvmLibraryConventionPlugin"
         }
     }
 }
